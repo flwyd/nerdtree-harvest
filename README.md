@@ -1,4 +1,4 @@
-# NERD Tree Harvest
+#README.md NERD Tree Harvest
 
 This is a Vim plugin that adds several ways to "harvest" file paths from the
 [NERD Tree directory browser](https://github.com/perservim/nerdtree).
@@ -23,9 +23,10 @@ Key  | Name              | Path Modification
 `yr` | yank root         | `:t:r` File name with last extension removed
 `ye` | yank extension    | `:e` Last extension of file name
 
-The yank mappings currently harvest paths into the default register (`"`) and
-can thus be inserted into another buffer with the `p` command or `CTRL-R = "`.
-TODO: add support for designating a named register.
+The yank register can be selected in the usual way, e.g. `"ryt` will yank the
+file name into the `r` register. If no register is given, the yank mappings
+harvest paths into the default register (`"`) and can thus be inserted into
+another buffer with the `p` command or `CTRL-R = "`.
 
 ## Command Mappings
 

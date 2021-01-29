@@ -14,14 +14,14 @@
 
 " NERDTree plugin mappings for yanking a path to register " with filename
 " modifiers applied.  For example, yh yanks basedir path, like %:h.
-if exists('g:nerdtree_harvest_yank_loaded') || version < 700
+if exists('g:nerdtree_harvest_yank_loaded') || version < 703
   finish
 endif
 let g:nerdtree_harvest_yank_loaded = 1
 
-" Yank node's path into register " with modifier (e.g. ':p') applied.
+" Yank node's path into selected register with modifier (e.g. ':p') applied.
 function! s:yankModified(modifier, node) abort
-  eval setreg('"', fnamemodify(a:node.path.str(), a:modifier))
+  eval setreg(v:register, fnamemodify(a:node.path.str(), a:modifier))
 endfunction
 
 " Declare a NERDTree mapping to yank with modifier applied.
