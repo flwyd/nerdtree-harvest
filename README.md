@@ -1,4 +1,4 @@
-#README.md NERD Tree Harvest
+# NERD Tree Harvest
 
 This is a Vim plugin that adds several ways to "harvest" file paths from the
 [NERD Tree directory browser](https://github.com/perservim/nerdtree).
@@ -26,7 +26,27 @@ Key  | Name              | Path Modification
 The yank register can be selected in the usual way, e.g. `"ryt` will yank the
 file name into the `r` register. If no register is given, the yank mappings
 harvest paths into the default register (`"`) and can thus be inserted into
-another buffer with the `p` command or `CTRL-R = "`.
+another buffer with the `p` command or `CTRL-R = "`. Lowercase `y` yank mappings
+operate characterwise and overwrite the existing register contents.
+
+As with normal vim yanks, specifying an uppercase register name (`"Ryp`) will
+append the path to the register rather than replacing it. However, this does not
+include any delimiters or space, so the paths will all run together. To
+accommodate harvesting several files from a directory tree, uppercase `Y`
+mappings are provided, which append to the existing register. The uppercase `Y`
+mappings all operate linewise (even if the register starts empty), so `p`
+putting the yanked text will do so on a new line rather than on the same line
+as the cursor.
+
+Key  | Name                | Path Modification
+---- | ------------------- | --------------------------------------------
+`Y.` | append relative     | `:.` File path from `$PWD`
+`Y~` | append from homedir | `:~` File path from `$HOME`
+`Yp` | append absolute     | `:p` Absolute path from root
+`Yh` | append head         | `:h` Parent directory path
+`Yt` | append tail         | `:t` Final path component (file name)
+`Yr` | append root         | `:t:r` File name with last extension removed
+`Ye` | append extension    | `:e` Last extension of file name
 
 ## Command Mappings
 
