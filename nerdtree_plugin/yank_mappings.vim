@@ -21,7 +21,7 @@ let g:nerdtree_harvest_yank_loaded = 1
 
 " Yank node's path into selected register with modifier (e.g. ':p') applied.
 function! s:yankModified(modifier, node) abort
-  eval setreg(v:register, fnamemodify(a:node.path.str(), a:modifier))
+  call setreg(v:register, fnamemodify(a:node.path.str(), a:modifier))
 endfunction
 
 " Declare a NERDTree mapping to yank with modifier applied.

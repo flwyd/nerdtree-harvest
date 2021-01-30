@@ -14,7 +14,7 @@
 
 " NERDTree plugin mappings for starting an ex command with a trailing path.
 " Uses ! for shell (`:! path`) and . for Ex (`: path`).
-if exists('g:nerdtree_harvest_command_loaded') || version < 700
+if exists('g:nerdtree_harvest_command_loaded') || version < 703
   finish
 endif
 let g:nerdtree_harvest_command_loaded = 1
@@ -27,9 +27,9 @@ function! s:startCommand(prefix, modifier, node) abort
   else
     let l:path = fnameescape(l:path)
   endif
-  eval feedkeys(':' . a:prefix . ' ' . l:path . "\<Home>", 'n')
+  call feedkeys(':' . a:prefix . ' ' . l:path . "\<Home>", 'n')
   if len(a:prefix) > 0
-    eval feedkeys(repeat("\<Right>", len(a:prefix)), 'n')
+    call feedkeys(repeat("\<Right>", len(a:prefix)), 'n')
   endif
 endfunction
 
