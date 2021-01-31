@@ -12,12 +12,18 @@
 " See the License for the specific language governing permissions and
 " limitations under the License.
 
-" NERDTree plugin mappings for yanking a path to register " with filename
-" modifiers applied.  For example, yh yanks basedir path, like %:h.
+" File: nerdtree_plugin/yank_mappings.vim
+" Author: Trevor Stone
+" Description: NERDTree plugin mappings for yanking a path to a register with
+" filename modifiers applied.  For example, yh yanks basedir path, like %:h.
 if exists('g:nerdtree_harvest_yank_loaded') || version < 703
   finish
 endif
 let g:nerdtree_harvest_yank_loaded = 1
+
+" yy, YY use the previous yank modifier, or relative path if it's the first
+" yank action.
+let s:lastModifier = ':.'
 
 " Yank node's path into selected register with modifier (e.g. ':p') applied.
 " opts contains setreg() options.
@@ -30,24 +36,25 @@ function! s:yankModified(modifier, opts, node) abort
   call setreg(v:register, fnamemodify(a:node.path.str(), a:modifier), a:opts)
 endfunction
 
-" Yanks a modified path characterwise, overwriting register contents.
-function! NERDTreeHarvest_yank(node) abort
-  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
+function! s:yankMapping(opts, node) abort
+  let l:op = nerdtreeharvest#readOperator()
+  let l:mod = l:op ==? 'y' ? s:lastModifier : nerdtreeharvest#modifier(l:op)
   if empty(l:mod)
     call nerdtreeharvest#ringBell()
   else
-    call s:yankModified(l:mod, 'v', a:node)
+    let s:lastModifier = l:mod
+    call s:yankModified(l:mod, a:opts, a:node)
   endif
+endfunction
+
+" Yanks a modified path characterwise, overwriting register contents.
+function! NERDTreeHarvest_yank(node) abort
+  call s:yankMapping('v', a:node)
 endfunction
 
 " Yanks a modified path linewise, appending to register contents.
 function! NERDTreeHarvest_Yank(node) abort
-  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
-  if empty(l:mod)
-    call nerdtreeharvest#ringBell()
-  else
-    call s:yankModified(l:mod, 'Va', a:node)
-  endif
+  call s:yankMapping('Va', a:node)
 endfunction
 
 " Lowercase y yanks a path characterwise and overwrites the register.

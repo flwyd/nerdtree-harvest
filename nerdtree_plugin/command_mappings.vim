@@ -12,12 +12,18 @@
 " See the License for the specific language governing permissions and
 " limitations under the License.
 
-" NERDTree plugin mappings for starting an ex command with a trailing path.
-" Uses ! for shell (`:! path`) and . for Ex (`: path`).
+" File: nerdtree_plugin/command_mappings.vim
+" Author: Trevor Stone
+" Description: NERDTree plugin mappings for starting an ex command with a
+" trailing path.  Uses ! for shell (`:! path`) and ; for Ex (`: path`).
 if exists('g:nerdtree_harvest_command_loaded') || version < 703
   finish
 endif
 let g:nerdtree_harvest_command_loaded = 1
+
+" ;; and !! use the previous modifier for that command type, or relative path
+" if it's the first invocation of that mapping.
+let s:lastModifier = {';': ':.', '!': ':.'}
 
 " Starts an Ex command (with prefix), inserts path, moves to the start.
 function! s:startCommand(prefix, modifier, node) abort
@@ -33,37 +39,34 @@ function! s:startCommand(prefix, modifier, node) abort
   endif
 endfunction
 
-" Starts an ex command, with modified path escaped.
-function! NERDTreeHarvest_ex(node) abort
+function! s:commandMapping(mapping, prefix, node) abort
   if v:count1 > 1
-    echo 'Cannot use a count with .'
+    echo 'Cannot use a count with ' . a:mapping
     return
   endif
-  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
+  let l:op = nerdtreeharvest#readOperator()
+  let l:mod = l:op ==# a:mapping ? s:lastModifier[a:mapping] : nerdtreeharvest#modifier(l:op)
   if empty(l:mod)
     call nerdtreeharvest#ringBell()
   else
-    call s:startCommand('', l:mod, a:node)
+    let s:lastModifier[a:mapping] = l:mod
+    call s:startCommand(a:prefix, l:mod, a:node)
   endif
+endfunction
+
+" Starts an ex command, with modified path escaped.
+function! NERDTreeHarvest_ex(node) abort
+  call s:commandMapping(';', '', a:node)
 endfunction
 
 " Starts a shell command, with modified path quote-escaped.
 function! NERDTreeHarvest_shell(node) abort
-  if v:count1 > 1
-    echo 'Cannot use a count with !'
-    return
-  endif
-  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
-  if empty(l:mod)
-    call nerdtreeharvest#ringBell()
-  else
-    call s:startCommand('!', l:mod, a:node)
-  endif
+  call s:commandMapping('!', '!', a:node)
 endfunction
 
-" . starts an ex command line (:) with modified path at the end.
+" ; starts an ex command line (:) with modified path at the end.
 call NERDTreeAddKeyMap({
-    \ 'key': '.',
+    \ 'key': ';',
     \ 'callback': 'NERDTreeHarvest_ex',
     \ 'quickhelpText': 'start ex command',
     \ 'scope': 'Node'})
