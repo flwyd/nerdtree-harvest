@@ -35,6 +35,7 @@
 "   `r` | root      | `:t:r` Tail with last extension removed (`/a/b.c` -> `b`)
 "   `e` | extension | `:e` Last extension of the file name (`/a/b.c` -> `c`)
 "   `:` | modifier  | `:` Arbitrary modifier, type enter to end e.g. `:~:h<CR>`
+"   `?` | help      | Echo a list of modifiers, continue reading next one
 " <
 " Additional documentation and the latest version of this plugin can be found
 " at https://github.com/flwyd/nerdtree-harvest
@@ -42,7 +43,8 @@
 ""
 " @section Mappings, mappings
 " The following mappings are added to |NERDTree| buffers. |Yank| mappings accept
-" |registers| as a prefix and default to the unnamed register.
+" |registers| as a prefix and default to the unnamed register. Pressing `?`
+" after the first character of a mapping will show available modifier keys.
 "
 " *nerdtree-harvest-y* *nerdtree-harvest-yank*
 "
@@ -56,6 +58,7 @@
 "   yr  Yank the final path component, with its last extension removed
 "   ye  Yank the last extension of the file
 "   y:  Enter additional |filename-modifiers| keys, end with <CR>
+"   y?  Show a list of modifiers, continue reading
 " <
 "
 " *nerdtree-harvest-Y* *nerdtree-harvest-Yank*
@@ -71,6 +74,7 @@
 "   Yr  Yank the final path component, with its last extension removed
 "   Ye  Yank the last extension of the file
 "   Y:  Enter additional |filename-modifiers| keys, end with <CR>
+"   Y?  Show a list of modifiers, continue reading
 " <
 "
 " *nerdtree-harvest-.* *nerdtree-harvest-command*
@@ -85,6 +89,7 @@
 "   .r  Ex command with the final path component, with last extension removed
 "   .e  Ex command with the last extension of the file
 "   .:  Enter additional |filename-modifiers| keys, end with <CR>
+"   .?  Show a list of modifiers, continue reading
 " <
 "
 " *nerdtree-harvest-!* *nerdtree-harvest-shell*
@@ -99,6 +104,7 @@
 "   !r  Shell command with the final path component, with last extension removed
 "   !e  Shell command with the last extension of the file
 "   !:  Enter additional |filename-modifiers| keys, end with <CR>
+"   !?  Show a list of modifiers, continue reading
 " <
 
 if exists('g:nerdtree_harvest_functions_loaded') || version < 703

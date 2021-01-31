@@ -26,6 +26,7 @@ Modifier | Name      | Path Modification
 `r`      | root      | `:t:r` Tail with last extension removed (`/a/b.c` → `b`)
 `e`      | extension | `:e` Last extension of the file name (`/a/b.c` → `c`)
 `:`      | modifier  | `:` Arbitrary modifier, type enter to end e.g. `:~:h<CR>`
+`?`      | help      | Echo a list of modifiers, continue reading next one
 
 ## Yank Mappings
 
@@ -41,9 +42,8 @@ Key  | Name               | Path Modification
 `yt` | yank tail          | Final path component (file name)
 `yr` | yank root          | File name with last extension removed
 `ye` | yank extension     | Last extension of file name
-`y:` | yank with modifier | Type arbitrary modifier, enter to end
-     :                    : `y:s/foo/bar/:.<CR>` replaces foo→bar, then gets
-     :                    : converted to a relative path
+`y:` | yank with modifier | Type arbitrary modifier, enter to end `y:s/foo/bar/:.<CR>` replaces foo→bar, then gets converted to a relative path
+`y?` | help               | Echo a list of modifiers, continue reading next one
 
 The yank register can be selected in the usual way, e.g. `"ryt` will yank the
 file name into the `r` register. If no register is given, the yank mappings
@@ -71,16 +71,8 @@ Key  | Name                 | Path Modification
 `Yt` | append tail          | Final path component (file name)
 `Yr` | append root          | File name with last extension removed
 `Ye` | append extension     | Last extension of file name
-`Y:` | append with modifier | Type arbitrary modifier, enter to end
-     :                      : `Y:t:S<CR>` yanks shell-quoted file name
-
-NERD Tree accepts a count for mappings, but just runs each mapping in sequence
-for the next N directory nodes. If you use a count with `y` or `Y` you will be
-need to enter that many modifiers (they can be different or all the same).
-Since `y` overwrites the register, you will end up with the final path after a
-counted mapping. A count with `Y` will append each referenced file. Mappings for
-`.` and `!` currently print an error message N times if a count is given. A
-future update to this plugin may improve the behavior with counts.
+`Y:` | append with modifier | Type arbitrary modifier, enter to end `Y:t:S<CR>` yanks shell-quoted file name
+`Y?` | help                 | Echo a list of modifiers, continue reading next one
 
 ## Command Mappings
 
@@ -107,8 +99,8 @@ Key  | Name                     | Path Modification
 `.t` | ex command tail          | Final path component (file name)
 `.r` | ex command root          | File name with last extension removed
 `.e` | ex command extension     | Last extension of file name
-`.:` | ex command with modifier | Type arbitrary modifier, enter to end
-     :                          : `.:h:h<CR>` specifies parent’s parent dir
+`.:` | ex command with modifier | Type arbitrary modifier, enter to end `.:h:h<CR>` specifies parent’s parent dir
+`.?` | help                     | Echo a list of modifiers, continue reading next one
 
 ### Shell
 
@@ -126,8 +118,21 @@ Key  | Name                | Path Modification
 `!t` | shell tail          | Final path component (file name)
 `!r` | shell root          | File name with last extension removed
 `!e` | shell extension     | Last extension of file name
-`!:` | shell with modifier | Type arbitrary modifier, enter to end
-     :                     : `.:gs/a/z/<CR>` replaces all `a` with `z` in path
+`!:` | shell with modifier | Type arbitrary modifier, enter to end `.:gs/a/z/<CR>` replaces all `a` with `z` in path
+`!?` | help                | Echo a list of modifiers, continue reading next one
+
+## Limitations
+
+NERD Tree accepts a count for mappings, but just runs each mapping in sequence
+for the next N directory nodes. If you use a count with `y` or `Y` you will be
+need to enter that many modifiers (they can be different or all the same).
+Since `y` overwrites the register, you will end up with the final path after a
+counted mapping. A count with `Y` will append each referenced file. Mappings for
+`.` and `!` currently print an error message N times if a count is given. A
+future update to this plugin may improve the behavior with counts.
+
+These mappings are not available in visual mode. A visual yank will result in
+a register that looks like `▸ ^Gdoc/`
 
 ## Installation
 
