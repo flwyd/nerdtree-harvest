@@ -1,5 +1,5 @@
-*nerdtree-harvest.txt*
-                                                            *nerdtree-harvest*
+*nerdtree-harvest.txt*	Yank and ex/shell command mappings for NERDTree
+Trevor Stone <github@trevorstone.org>                       *nerdtree-harvest*
 
 ==============================================================================
 CONTENTS                                           *nerdtree-harvest-contents*

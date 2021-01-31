@@ -1,0 +1,9 @@
+{
+  "name": "nerdtree-harvest",
+  "description": "Yank and ex/shell command mappings for NERDTree",
+  "author": "Trevor Stone <github@trevorstone.org>",
+  "repository": {"type": "git", "url": "git://gihub.com/flwyd/nerdtree-harvest"},
+  "dependencies": {
+    "nerdtree": {}
+  }
+}
