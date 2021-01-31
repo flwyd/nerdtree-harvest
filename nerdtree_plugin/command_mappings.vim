@@ -33,35 +33,43 @@ function! s:startCommand(prefix, modifier, node) abort
   endif
 endfunction
 
-" Declare a NERDTree mapping to start a command with prefix.
-function! s:addCommandMap(mapping, prefix, modifier, name, help) abort
-  if has('lambda')
-    let l:Func = {node -> s:startCommand(a:prefix, a:modifier, node)}
-  else
-    let l:Func = 'NERDTreeStartCommand_' . a:name
-    execute "function!" l:Func . "(node) abort \n"
-      \ "call s:startCommand('" . a:prefix . "','" . a:modifier . "',a:node) \n"
-      \ "endfunction"
+" Starts an ex command, with modified path escaped.
+function! NERDTreeHarvest_ex(node) abort
+  if v:count1 > 1
+    echo 'Cannot use a count with .'
+    return
   endif
-  call NERDTreeAddKeyMap({
-    \ 'key': a:mapping,
-    \ 'callback': l:Func,
-    \ 'quickhelpText': a:help,
-    \ 'scope': 'Node'})
+  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
+  if empty(l:mod)
+    call nerdtreeharvest#ringBell()
+  else
+    call s:startCommand('', l:mod, a:node)
+  endif
 endfunction
 
-call s:addCommandMap('!p', '!', ':p', 'shell_absolute', 'shell with absolute path')
-call s:addCommandMap('!~', '!', ':~', 'shell_homedir', 'shell with homedir-relative path')
-call s:addCommandMap('!.', '!', ':.', 'shell_relative', 'shell with relative path')
-call s:addCommandMap('!h', '!', ':h', 'shell_head', 'shell with parent path')
-call s:addCommandMap('!t', '!', ':t', 'shell_tail', 'shell with filename')
-call s:addCommandMap('!r', '!', ':t:r', 'shell_root', 'shell with root filename')
-call s:addCommandMap('!e', '!', ':e', 'shell_extension', 'shell with filename extension')
+" Starts a shell command, with modified path quote-escaped.
+function! NERDTreeHarvest_shell(node) abort
+  if v:count1 > 1
+    echo 'Cannot use a count with !'
+    return
+  endif
+  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
+  if empty(l:mod)
+    call nerdtreeharvest#ringBell()
+  else
+    call s:startCommand('!', l:mod, a:node)
+  endif
+endfunction
 
-call s:addCommandMap('.p', '', ':p', 'ex_absolute', 'ex command with absolute path')
-call s:addCommandMap('.~', '', ':~', 'ex_homedir', 'ex command with homedir-relative path')
-call s:addCommandMap('..', '', ':.', 'ex_relative', 'ex command with relative path')
-call s:addCommandMap('.h', '', ':h', 'ex_head', 'ex command with parent path')
-call s:addCommandMap('.t', '', ':t', 'ex_tail', 'ex command with filename')
-call s:addCommandMap('.r', '', ':t:r', 'ex_root', 'ex command with root filename')
-call s:addCommandMap('.e', '', ':e', 'ex_extension', 'ex command with filename extension')
+" . starts an ex command line (:) with modified path at the end.
+call NERDTreeAddKeyMap({
+    \ 'key': '.',
+    \ 'callback': 'NERDTreeHarvest_ex',
+    \ 'quickhelpText': 'start ex command',
+    \ 'scope': 'Node'})
+" . starts a shell command line (:!) with modified path at the end.
+call NERDTreeAddKeyMap({
+    \ 'key': '!',
+    \ 'callback': 'NERDTreeHarvest_shell',
+    \ 'quickhelpText': 'start shell command',
+    \ 'scope': 'Node'})

@@ -20,6 +20,7 @@ endif
 let g:nerdtree_harvest_yank_loaded = 1
 
 " Yank node's path into selected register with modifier (e.g. ':p') applied.
+" opts contains setreg() options.
 function! s:yankModified(modifier, opts, node) abort
   " If switching from characterwise y-yank to linewise Y-yank, insert a line
   " break at the end of the existing register value
@@ -29,38 +30,35 @@ function! s:yankModified(modifier, opts, node) abort
   call setreg(v:register, fnamemodify(a:node.path.str(), a:modifier), a:opts)
 endfunction
 
-" Declare a NERDTree mapping to yank with modifier applied.
-function! s:addYankMap(mapping, modifier, opts, name, help) abort
-  if has('lambda')
-    let l:Func = {node -> s:yankModified(a:modifier, a:opts, node)}
+" Yanks a modified path characterwise, overwriting register contents.
+function! NERDTreeHarvest_yank(node) abort
+  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
+  if empty(l:mod)
+    call nerdtreeharvest#ringBell()
   else
-    let l:Func = 'NERDTreeHarvestYank_' . a:name
-    execute printf("function! %s(node) abort\n" .
-      \ "call s:yankModified('%s', '%s', a:node)\n endfunction",
-      \ l:Func, a:modifier, a:opts)
+    call s:yankModified(l:mod, 'v', a:node)
   endif
-  call NERDTreeAddKeyMap({
-    \ 'key': a:mapping,
-    \ 'callback': l:Func,
-    \ 'quickhelpText': a:help,
-    \ 'scope': 'Node'})
 endfunction
 
-" Lowercase y mappings set register characterwise and overwrite unless the
-" user specifies a capital register ("Ryp appends to register r)
-call s:addYankMap('yp', ':p', 'v', 'yank_absolute', 'yank absolute path')
-call s:addYankMap('y~', ':~', 'v', 'yank_homedir', 'yank homedir-relative path')
-call s:addYankMap('y.', ':.', 'v', 'yank_relative', 'yank relative path')
-call s:addYankMap('yh', ':h', 'v', 'yank_head', 'yank parent path')
-call s:addYankMap('yt', ':t', 'v', 'yank_tail', 'yank filename')
-call s:addYankMap('yr', ':t:r', 'v', 'yank_root', 'yank root filename')
-call s:addYankMap('ye', ':e', 'v', 'yank_extension', 'yank filename extension')
-" Uppercase Y mappings set register linewise and append even if the user
-" specifies a lowercase register ("rYp does not overwrite register r)
-call s:addYankMap('Yp', ':p', 'Va', 'Yank_absolute', 'append absolute path')
-call s:addYankMap('Y~', ':~', 'Va', 'Yank_homedir', 'append homedir-relative path')
-call s:addYankMap('Y.', ':.', 'Va', 'Yank_relative', 'append relative path')
-call s:addYankMap('Yh', ':h', 'Va', 'Yank_head', 'append parent path')
-call s:addYankMap('Yt', ':t', 'Va', 'Yank_tail', 'append filename')
-call s:addYankMap('Yr', ':t:r', 'Va', 'Yank_root', 'append root filename')
-call s:addYankMap('Ye', ':e', 'Va', 'Yank_extension', 'append filename extension')
+" Yanks a modified path linewise, appending to register contents.
+function! NERDTreeHarvest_Yank(node) abort
+  let l:mod = nerdtreeharvest#modifier(nerdtreeharvest#readOperator())
+  if empty(l:mod)
+    call nerdtreeharvest#ringBell()
+  else
+    call s:yankModified(l:mod, 'Va', a:node)
+  endif
+endfunction
+
+" Lowercase y yanks a path characterwise and overwrites the register.
+call NERDTreeAddKeyMap({
+    \ 'key': 'y',
+    \ 'callback': 'NERDTreeHarvest_yank',
+    \ 'quickhelpText': 'yank with modifier',
+    \ 'scope': 'Node'})
+" Lowercase y yanks a path linewise and appends to the register.
+call NERDTreeAddKeyMap({
+    \ 'key': 'Y',
+    \ 'callback': 'NERDTreeHarvest_Yank',
+    \ 'quickhelpText': 'append with modifier',
+    \ 'scope': 'Node'})
